@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>聊天室 - 登录</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- 引入字体图标库 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <div class="auth-container">
+        <!-- 登录界面 -->
+        <div id="login-screen" class="screen">
+            <div class="auth-header">
+                <div class="logo-container">
+                    <i class="fa fa-comments" style="color: #1a73e8;"></i>
+                </div>
+                <h1>欢迎回来</h1>
+                <p class="subtitle">登录您的聊天室账号</p>
+            </div>
+            
+            <form id="login-form">
+                <div class="input-group">
+                    <i class="fa fa-user input-icon"></i>
+                    <input type="text" id="login-identifier" placeholder="邮箱或手机号码" required>
+                </div>
+                <div class="input-group">
+                    <i class="fa fa-lock input-icon"></i>
+                    <input type="password" id="login-password" placeholder="密码" required>
+                    <i class="fa fa-eye-slash toggle-password"></i>
+                </div>
+                <div class="remember-forgot">
+                    <label class="remember-me">
+                        <input type="checkbox" id="remember-me">
+                        <span>记住我</span>
+                    </label>
+                    <a href="#" class="forgot-password">忘记密码?</a>
+                </div>
+                <button type="submit" class="primary-button">登录</button>
+            </form>
+            
+            <div class="auth-footer">
+                <p>还没有账号? <a href="#" id="show-register">立即注册</a></p>
+            </div>
+        </div>
+        
+        <!-- 注册界面 -->
+        <div id="register-screen" class="screen hidden">
+            <div class="auth-header">
+                <div class="logo-container">
+                    <i class="fa fa-user-plus" style="color: #1a73e8;"></i>
+                </div>
+                <h1>创建账号</h1>
+                <p class="subtitle">加入我们的聊天社区</p>
+            </div>
+            
+            <form id="register-form">
+            <div class="input-group">
+                <i class="fa fa-user input-icon"></i>
+                <input type="text" id="register-username" placeholder="用户名" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-envelope input-icon"></i>
+                <input type="email" id="register-email" placeholder="邮箱" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-phone input-icon"></i>
+                <input type="text" id="register-phone" placeholder="手机号码" required>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-lock input-icon"></i>
+                <input type="password" id="register-password" placeholder="密码" required>
+                <i class="fa fa-eye-slash toggle-password"></i>
+            </div>
+            <div class="input-group">
+                <i class="fa fa-check-circle input-icon"></i>
+                <input type="password" id="register-confirm-password" placeholder="确认密码" required>
+                <i class="fa fa-eye-slash toggle-password"></i>
+            </div>
+            <div class="terms-policy">
+                <label class="terms-checkbox">
+                    <input type="checkbox" id="accept-terms" required>
+                    <span>我已阅读并同意<a href="#">服务条款</a>和<a href="#">隐私政策</a></span>
+                </label>
+            </div>
+            <button type="submit" class="primary-button">创建账号</button>
+        </form>
+        <div class="auth-footer">
+            <p>已有账号? <a href="#" id="show-login">返回登录</a></p>
+        </div>
+    </div>
+    </div>
+    
+
+
+    <!-- 登录相关脚本 -->
+    <script src="js/auth.js"></script>
+</body>
+</html>

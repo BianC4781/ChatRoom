@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>聊天室</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- WebSocket客户端库 -->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stomp-websocket@2.3.4-next/lib/stomp.min.js"></script>
+    <!-- 引入字体图标库 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <!-- 聊天界面 -->
+    <div id="chat-screen">
+        <!-- 侧边栏：显示聊天列表 -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fa fa-comments"></i> 聊天列表</h3>
+                <div class="sidebar-search">
+                    <i class="fa fa-search"></i>
+                    <input type="text" id="search-chat" placeholder="搜索聊天...">
+                </div>
+            </div>
+            
+            <div id="user-info">
+                <div class="user-avatar">
+                    <i class="fa fa-user"></i>
+                </div>
+                <span id="username-display"></span>
+                <div class="user-status online">
+                    <i class="fa fa-circle"></i>
+                    <span>在线</span>
+                </div>
+            </div>
+            
+            <div class="chat-tabs">
+                <div class="tab active" data-tab="all"><i class="fa fa-list"></i> 全部</div>
+                <div class="tab" data-tab="groups"><i class="fa fa-users"></i> 群聊</div>
+                <div class="tab" data-tab="private"><i class="fa fa-user"></i> 私聊</div>
+            </div>
+            
+            <div class="chat-list-container">
+                <ul id="user-list">
+                    <!-- 聊天列表将由JavaScript动态填充 -->
+                    <li data-type="PUBLIC" class="active">
+                        <div class="chat-avatar">
+                            <i class="fa fa-users"></i>
+                        </div>
+                        <div class="chat-info">
+                            <div class="chat-name">公共聊天室</div>
+                            <div class="chat-preview">所有人都可以看到的消息</div>
+                        </div>
+                        <div class="chat-time">现在</div>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-footer">
+                <button id="settings-button"><i class="fa fa-cog"></i></button>
+                <button id="new-chat-button"><i class="fa fa-plus"></i></button>
+                <button id="logout-button"><i class="fa fa-sign-out"></i> 退出</button>
+            </div>
+        </div>
+
+        <!-- 主聊天窗口 -->
+        <div class="chat-window">
+            <div class="chat-header">
+                <div class="chat-header-info">
+                    <h2>公共聊天室</h2>
+                    <span class="chat-status">加载中...</span>
+                </div>
+                <div class="chat-header-actions">
+                    <button class="action-button" id="chat-info-button"><i class="fa fa-info-circle"></i></button>
+                    <button class="action-button" id="chat-search-button"><i class="fa fa-search"></i></button>
+                </div>
+            </div>
+            
+            <div id="message-list">
+                <div class="date-divider">今天</div>
+                <div class="messages-container">
+                    <!-- 消息将由JavaScript动态填充 -->
+                    <div class="message system-message">欢迎来到聊天室</div>
+                </div>
+            </div>
+            
+            <div class="chat-footer">
+                <div class="message-tools">
+                    <button type="button" class="tool-button" id="file-button"><i class="fa fa-paperclip"></i></button>
+                    <button type="button" class="tool-button" id="image-button"><i class="fa fa-image"></i></button>
+                    <div class="emoji-container">
+                        <button type="button" class="tool-button" id="emoji-button">😊</button>
+                        <div id="emoji-picker" class="hidden">
+                            <div class="emoji-tabs">
+                                <span class="emoji-tab active">😊</span>
+                                <span class="emoji-tab">🐱</span>
+                                <span class="emoji-tab">🍕</span>
+                                <span class="emoji-tab">🎮</span>
+                            </div>
+                            <div class="emoji-content">
+                                <div class="emoji">😊</div>
+                                <div class="emoji">😂</div>
+                                <div class="emoji">😍</div>
+                                <div class="emoji">🤔</div>
+                                <div class="emoji">😎</div>
+                                <div class="emoji">😢</div>
+                                <div class="emoji">😡</div>
+                                <div class="emoji">👍</div>
+                                <div class="emoji">👎</div>
+                                <div class="emoji">❤️</div>
+                                <div class="emoji">🎉</div>
+                                <div class="emoji">🔥</div>
+                                <div class="emoji">🙏</div>
+                                <div class="emoji">👋</div>
+                                <div class="emoji">🤝</div>
+                                <div class="emoji">🌹</div>
+                                <div class="emoji">🍕</div>
+                                <div class="emoji">🍺</div>
+                                <div class="emoji">🎵</div>
+                                <div class="emoji">🎮</div>
+                                <div class="emoji">🚀</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <form id="message-form">
+                    <input type="text" id="message-input" placeholder="输入消息..." autocomplete="off">
+                    <button type="submit" class="send-button"><i class="fa fa-paper-plane"></i></button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/chat.js"></script>
+    <script src="js/private-chat.js"></script>
+    <script>
+        // 页面加载完成后初始化表情选择器
+        document.addEventListener('DOMContentLoaded', function() {
+            // 确保表情选择器正常工作
+            document.getElementById('emoji-button').addEventListener('click', function(event) {
+                event.preventDefault(); // 防止表单提交
+                event.stopPropagation(); // 阻止事件冒泡
+                document.getElementById('emoji-picker').classList.toggle('hidden');
+            });
+            
+            // 点击表情添加到输入框
+            document.querySelectorAll('.emoji').forEach(emoji => {
+                emoji.addEventListener('click', function(event) {
+                    event.preventDefault(); // 防止表单提交
+                    event.stopPropagation(); // 阻止事件冒泡
+                    const messageInput = document.getElementById('message-input');
+                    messageInput.value += this.textContent;
+                    document.getElementById('emoji-picker').classList.add('hidden');
+                    messageInput.focus();
+                });
+            });
+            
+            // 点击其他地方关闭表情选择器
+            document.addEventListener('click', function(event) {
+                const emojiPicker = document.getElementById('emoji-picker');
+                const emojiButton = document.getElementById('emoji-button');
+                if (!emojiPicker.contains(event.target) && event.target !== emojiButton) {
+                    emojiPicker.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+    <!-- 聊天相关脚本 -->
+    <script src="js/chat.js"></script>
+    <script src="js/private-chat.js"></script>
+</body>
+</html>
